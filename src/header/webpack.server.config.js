@@ -7,10 +7,10 @@ module.exports = {
   // The target should be set to "node" to avoid packaging built-ins.
   target: 'node',
   // The entry should be our server entry file, not the default one.
-  entry: './src/main.server.js',
+  entry: './src/content/src/main.server.js',
   output: {
-    path: path.resolve(__dirname, './dist'),
-    publicPath: '/dist/',
+    path: path.resolve(__dirname, './../../dist/header'),
+    publicPath: '/dist/header',
     filename: 'build.js',
     // Outputs node-compatible modules instead of browser-compatible.
     libraryTarget: 'commonjs2'
@@ -50,7 +50,7 @@ module.exports = {
     hints: false
   },
   // Avoids bundling external dependencies, so node can load them directly from node_modules/
-  externals: Object.keys(require('./package.json').dependencies),
+  externals: Object.keys(require('./../../package.json').dependencies),
   devtool: 'source-map',
   // No need to put these behind a production env variable.
   plugins: [

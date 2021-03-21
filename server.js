@@ -1,32 +1,25 @@
-#!/usr/bin/env node
+const express = require('express')
+const fetch = require('node-fetch')
+const app = express()
+const port = 4000
 
-const fs = require('fs');
-const express = require('express');
-const { createBundleRenderer } = require('vue-server-renderer');
+const baseUrlContent = 'http://localhost:3000'
+const baseUrlHeader = 'http://localhost:3001'
 
-const bundleRenderer = createBundleRenderer(
-  // Load the SSR bundle with require.
-  require('./dist/vue-ssr-bundle.json'),
-  {
-    // Yes, I know, readFileSync is bad practice. It's just shorter to read here.
-    template: fs.readFileSync('./index.html', 'utf-8')
-  }
-);
+app.get('/', async (req, res) => {
+  const responseHeader = await fetch(baseUrlHeader)
+  const dataHeader = await responseHeader.text()
 
-// Create the express app.
-const app = express();
+  const responseContent = await fetch(baseUrlContent)
+  const dataContent = await responseContent.text()
 
-// Serve static assets from ./dist on the /dist route.
-app.use('/dist', express.static('dist'));
+  res.send(`
+    ${dataHeader}
+    <p style="text-align: center; margin: 20px">Paragraph from express</p>
+    ${dataContent}
+  `)
+})
 
-// Render all other routes with the bundleRenderer.
-app.get('*', (req, res) => {
-  bundleRenderer
-    // Renders directly to the response stream.
-    // The argument is passed as "context" to main.server.js in the SSR bundle.
-    .renderToStream({url: req.path})
-    .pipe(res);
-});
-
-// Bind the app to this port.
-app.listen(8080);
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`)
+})
